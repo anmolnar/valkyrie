@@ -162,7 +162,14 @@ def analyze_build(args):
     for url_max_build in expanded_urls:
         url = url_max_build["url"]
         excludes = url_max_build["excludes"]
-        json_response = requests.get(url + "/api/json").json()
+
+        try:
+            json_response = requests.get(url + "/api/json").json()      
+        except ValueError:
+            # Try it one more time in case Jenkins had some intermittent failure
+            LOG.error("failed to get: " + url + "/api/json, re-trying...")
+            json_response = requests.get(url + "/api/json").json()      
+
         if json_response.has_key("builds"):
             builds = json_response["builds"]
             LOG.info("Analyzing job: %s", url)
