@@ -164,10 +164,11 @@ def analyze_build(args):
         excludes = url_max_build["excludes"]
 
         try:
+            raise ValueError("hello world")
             json_response = requests.get(url + "/api/json").json()      
-        except ValueError:
+        except ValueError as e:
             # Try it one more time in case Jenkins had some intermittent failure
-            LOG.error("failed to get: " + url + "/api/json, re-trying...")
+            LOG.error("Retrying to get: " + url + "/api/json : " + str(e))
             json_response = requests.get(url + "/api/json").json()      
 
         if json_response.has_key("builds"):
